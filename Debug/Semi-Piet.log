@@ -1,0 +1,4 @@
+﻿  Semi-Piet.cpp
+c:\users\daniele\source\repos\m8\fuck off m8\semi-piet\semi-piet.cpp(48): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+c:\users\daniele\source\repos\m8\fuck off m8\semi-piet\semi-piet.cpp(125): warning C4244: '=': conversione da 'std::streamoff' a 'long'. Possibile perdita di dati.
+  Semi-Piet.vcxproj -> C:\Users\Daniele\Source\Repos\M8\fuck off m8\Debug\Semi-Piet.exe

@@ -1,0 +1,9 @@
+﻿  Semi-Piet.cpp
+Semi-Piet.cpp(48): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+Semi-Piet.cpp(125): warning C4244: '=': conversione da 'std::streamoff' a 'long'. Possibile perdita di dati.
+  Generazione codice in corso...
+  3 of 699 functions ( 0.4%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    24 functions had inline decision re-evaluated but remain unchanged
+  Generazione codice terminata
+  Semi-Piet.vcxproj -> C:\Users\Daniele\Source\Repos\M8\fuck off m8\Release\Semi-Piet.exe
