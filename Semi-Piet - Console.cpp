@@ -7,65 +7,11 @@
 #include <string>
 #include <algorithm>
 
-#ifndef __linux										//
-#include <io.h>										// Vede se esiste un file...
-#define access    _access_s							//
-#else												//
-#include <unistd.h>									//
-#endif												// Abbastanza semplice no?
-													//
-bool FileExists(const std::string &Filename)		//
-{													//
-	return access(Filename.c_str(), 0) == 0;		//
-}													//
-
 #define controllo 193
 using namespace cimg_library;
 
-struct chosen_file {
-	std::string percorso;
-	HANDLE handle;
-};
-chosen_file scegli_file_txt() {  //Crea la finestra di scelta file
-	OPENFILENAME ofn;       // common dialog box structure
-	char szFile[260];       // buffer for file name
-	HWND hwnd = NULL;       // owner window
-	HANDLE hf;              // file handle
+std::ifstream in2("input.txt", std::ios::binary);
 
-							// Initialize OPENFILENAME
-	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = hwnd;
-	ofn.lpstrFile = szFile;
-	// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
-	// use the contents of szFile to initialize itself.
-	ofn.lpstrFile[0] = '\0';
-	ofn.nMaxFile = sizeof(szFile);
-	ofn.lpstrFilter = "*.txt";
-	ofn.nFilterIndex = 1;
-	ofn.lpstrFileTitle = NULL;
-	ofn.nMaxFileTitle = 0;
-	ofn.lpstrInitialDir = NULL;
-	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-
-	// Display the Open dialog box. 
-
-	chosen_file file1;		// Mi restituisce sia il percorso del file, sia l'handle nel caso mi servisse
-
-	if (GetOpenFileName(&ofn) == TRUE) {
-		hf = CreateFile(ofn.lpstrFile,
-			GENERIC_READ,
-			0,
-			(LPSECURITY_ATTRIBUTES)NULL,
-			OPEN_EXISTING,
-			FILE_ATTRIBUTE_NORMAL,
-			(HANDLE)NULL);
-
-		file1.handle = hf;
-		file1.percorso = szFile;   // Copio il percorso salvato in szFile nel membro 'percorso' di 'file1'
-	}
-	return file1;
-}
 int trova(char * mat, char c) {  //Trova l'indice del carattere di cin.get()
 
 	int i = 0;
@@ -84,6 +30,7 @@ int trova(char * mat, char c) {  //Trova l'indice del carattere di cin.get()
 	}
 	else return -1;
 }
+
 std::streamoff fileSizei(std::ifstream &input) {
 
 	std::streampos inizio, fine;
@@ -94,7 +41,7 @@ std::streamoff fileSizei(std::ifstream &input) {
 	return fine - inizio;
 }
 
-void Cripta(char* dizionario, std::ifstream &in2) { //Bisogna usare una chiamata 'per riferimento' (ifstream &in2) 
+void Cripta( char* dizionario ) {
 	
 	std::cin.rdbuf(in2.rdbuf());
 
@@ -110,7 +57,7 @@ void Cripta(char* dizionario, std::ifstream &in2) { //Bisogna usare una chiamata
 	CImgDisplay main(testC, "Semi-Piet");
 
 	in2.close();									//chiudo il file di input
-/*	std::ofstream on("input.txt", std::ios::app);   //lo faccio diventare file di output per scriverci un carattere di controllo finale (app = scrivi alla fine del file)
+	std::ofstream on("input.txt", std::ios::app);   //lo faccio diventare file di output per scriverci un carattere di controllo finale (app = scrivi alla fine del file)
 	std::cout.rdbuf(on.rdbuf());					// Mannaia la puttana dovevo cambiare lo stream
 	std::cout << char(controllo);					//scrivo il carattere di controllo ( A accentata )
 	on.close();										//chiudo il file di output
@@ -118,8 +65,7 @@ void Cripta(char* dizionario, std::ifstream &in2) { //Bisogna usare una chiamata
 	std::cout.rdbuf(on2.rdbuf());									 // Mannaia la puttana dovevo cambiare lo stream x 2
 	std::cout << "\n";												 // Ci metto anche un ritorno a capo all'inizio perchè mi si sfotte il primo carattere nella decrittazione
 	on2.close();													 // a-richiudo il file di output
-*/	
-	std::ifstream in("Semi-Piet.txt");					 //lo faccio diventare di nuovo di input
+	std::ifstream in("input.txt");					 //lo faccio diventare di nuovo di input
 	std::cin.rdbuf(in.rdbuf());						 // Mannaia la puttana dovevo cambiare lo stream x 3
 
 	char lol = in.get();
@@ -130,7 +76,7 @@ void Cripta(char* dizionario, std::ifstream &in2) { //Bisogna usare una chiamata
 
 		lol = in.get();
 
-	while (!in.eof() && lol != char(-1)) {
+	while (lol != char(controllo) && lol != char(-1)) {
 
 		asdf = trova(&dizionario[0], lol); // Trovo l'indice del carattere nell'array 'caratteri'
 
@@ -165,23 +111,23 @@ void Cripta(char* dizionario, std::ifstream &in2) { //Bisogna usare una chiamata
 //	while (!main.is_closed()) {
 //
 //	}
-	testC.save_bmp("Semi-Piet.bmp");
+	testC.save_bmp("test1.bmp");
 
 	
 }
 
-void Decritta( char* dizionario, std::ifstream &in2) {
+void Decritta( char* dizionario ) {
 
-	CImg <unsigned char> testD("Semi-Piet.bmp");
+	CImg <unsigned char> testD("test1.bmp");
 	char ahboh;
 
 	long int f_size = 0, contatore = 0;
-	f_size = fileSizei(in2);		//Potrei usare il carattere eof per vedere se la fine del file è stata raggiunta 
+	f_size = fileSizei(in2);
 	bool minchia = true;
 
 	in2.close();
-	
-	std::ofstream out("Semi-Piet output.txt");
+
+	std::ofstream out("output.txt");
 	std::cout.rdbuf(out.rdbuf());
 
 	for (int i = 0; i < testD.height() && minchia; ++i ) {
@@ -199,11 +145,12 @@ void Decritta( char* dizionario, std::ifstream &in2) {
 			}
 		}
 	}
+//	int loli = 1;
 }
 
 int main()
 {
-	std::ifstream in2("Semi-Piet.txt", std::ios::binary);
+
 	std::streambuf *consIn, *consOut;
 	consOut = std::cout.rdbuf(); 
 	consIn = std::cin.rdbuf();
@@ -214,7 +161,6 @@ int main()
 
 		std::cout << "\n Vuoi criptare o decrittare un file? \n C / D (Crittare / Decrittare)\n ";
 		std::cin >> scelta;
-
 		if ( toupper(scelta) != 'C' && toupper(scelta) != 'D') { // così che valgano anche gli input 'c' e 'd' (minuscoli)
 			std::cout << " Ripetere la scelta \n";
 		}
@@ -224,21 +170,21 @@ int main()
 
 		std::cout << " Creando il file bitmap... \n";
 
-		if(FileExists("Semi-piet.bmp"))	remove("Semi-Piet.bmp");
+		remove("test1.bmp");
 
-		Cripta( &caratteri[0] , in2);
+		Cripta( &caratteri[0] );
 
 		std::cin.rdbuf(consIn);		//resetta lo stream di input 
 		std::cout.rdbuf(consOut);	//resetta lo stream di output
 
 		std::cout << "\n File bitmap creato con successo \n\n";
-	}
 
+	}
 
 	else if (toupper(scelta) == 'D') {
 		std::cout << " Decrittando l'immagine... ";
 		
-		Decritta( &caratteri[0] , in2);
+		Decritta( &caratteri[0] );
 
 		std::cout.rdbuf(consOut);	//resetta lo stream di output
 		std::cin.rdbuf(consIn);		//resetta lo stream di input
